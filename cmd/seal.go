@@ -63,6 +63,8 @@ var sealCmd = &cobra.Command{
 			return fmt.Errorf("loading config: %w", err)
 		}
 
+		serverURL := strings.TrimRight(cfg.ServerURL, "/")
+
 		key, err := crypto.GenerateKey()
 		if err != nil {
 			return err
@@ -97,7 +99,7 @@ var sealCmd = &cobra.Command{
 			fragment = crypto.ToBase64URL(key)
 		}
 
-		client := api.NewClient(cfg.ServerURL)
+		client := api.NewClient(serverURL)
 		resp, err := client.CreatePaste(&api.CreatePasteRequest{
 			Content:       encrypted,
 			BurnAfterRead: sealBurn,
@@ -109,7 +111,7 @@ var sealCmd = &cobra.Command{
 			return fmt.Errorf("uploading: %w", err)
 		}
 
-		url := fmt.Sprintf("%s/%s#%s", cfg.ServerURL, resp.ID, fragment)
+		url := fmt.Sprintf("%s/%s#%s", serverURL, resp.ID, fragment)
 		green := color.New(color.FgGreen)
 		green.Println(url)
 

@@ -2,13 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
 	"github.com/FacileStudio/capsule-cli/internal/api"
-	"github.com/FacileStudio/capsule-cli/internal/config"
 )
 
 var revokeToken string
@@ -24,20 +22,13 @@ var revokeCmd = &cobra.Command{
 	Short: "Burn a capsule",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		rawURL := args[0]
-
-		id, _, err := parseRevokeURL(rawURL)
+		parsed, err := parseURL(args[0])
 		if err != nil {
 			return err
 		}
 
-		cfg, err := config.Load()
-		if err != nil {
-			return fmt.Errorf("loading config: %w", err)
-		}
-
-		client := api.NewClient(cfg.ServerURL)
-		if err := client.Delete(id, revokeToken); err != nil {
+		client := api.NewClient(parsed.ServerURL)
+		if err := client.Delete(parsed.ID, revokeToken); err != nil {
 			return fmt.Errorf("revoking: %w", err)
 		}
 
@@ -45,20 +36,4 @@ var revokeCmd = &cobra.Command{
 		green.Println("Capsule burned.")
 		return nil
 	},
-}
-
-func parseRevokeURL(rawURL string) (string, string, error) {
-	rawURL = strings.Split(rawURL, "#")[0]
-
-	parts := strings.Split(rawURL, "/")
-	if len(parts) == 0 {
-		return "", "", fmt.Errorf("no paste ID found in URL")
-	}
-
-	id := parts[len(parts)-1]
-	if id == "" {
-		return "", "", fmt.Errorf("no paste ID found in URL")
-	}
-
-	return id, "", nil
 }
