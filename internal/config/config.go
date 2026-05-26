@@ -8,7 +8,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const DefaultServerURL = "https://capsule.facile.dev"
+const DefaultServerURL = "https://capsule.facile.studio"
 
 type Config struct {
 	ServerURL string `yaml:"server_url"`

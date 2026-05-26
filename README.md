@@ -46,16 +46,16 @@ capsule seal "top secret" --password
 
 ```bash
 # Prints plaintext to stdout
-capsule reveal https://capsule.facile.dev/cap_abc123#keyFragment
+capsule reveal https://capsule.facile.studio/cap_abc123#keyFragment
 
 # Pipe to file
-capsule reveal https://capsule.facile.dev/cap_abc123#keyFragment > secret.txt
+capsule reveal https://capsule.facile.studio/cap_abc123#keyFragment > secret.txt
 ```
 
 ### Revoke (burn a capsule)
 
 ```bash
-capsule revoke https://capsule.facile.dev/cap_abc123 --token abc123...def456
+capsule revoke https://capsule.facile.studio/cap_abc123 --token abc123...def456
 ```
 
 ### Config
