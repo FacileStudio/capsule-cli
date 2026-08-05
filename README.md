@@ -1,89 +1,90 @@
-# Capsule
+# capsule-cli
 
-Zero-knowledge encrypted paste sharing from the terminal. The server never sees your plaintext — all encryption happens client-side using AES-256-GCM.
+Terminal client for Capsule, the zero-knowledge encrypted paste service. All encryption
+happens on your machine; the server only ever stores ciphertext.
+
+The binary is named `capsule`. It talks to any Capsule-compatible server and defaults to
+`https://capsule.facile.studio`.
+
+## What it does
+
+- Encrypts content client-side with AES-256-GCM and uploads only the ciphertext
+- Puts the decryption key in the URL fragment, which HTTP clients never send to the server
+- Reads content from an argument or from stdin, so it composes with pipes
+- Optionally wraps the key with a password using PBKDF2-SHA256 at 600,000 iterations
+- Fetches and decrypts a capsule back to stdout
+- Revokes a capsule early with the delete token returned at creation time
+- Points at a self-hosted server through a single YAML config file
+
+## Stack
+
+| Layer | Tech |
+|---|---|
+| CLI | Go 1.26, cobra 1.10, `golang.org/x/crypto` (PBKDF2), `golang.org/x/term`, fatih/color |
+| Storage | `~/.capsule.yml`, YAML via `gopkg.in/yaml.v3` |
+| Deploy | GoReleaser, GitHub Actions on tag push, Homebrew tap `FacileStudio/tap` |
 
 ## Install
 
-### Go
-
-```bash
-go install github.com/FacileStudio/capsule-cli@latest
-```
-
-### Homebrew
-
-```bash
+```sh
 brew install FacileStudio/tap/capsule
 ```
 
-### From source
+With a Go toolchain:
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/FacileStudio/capsule-cli/main/install.sh | bash
+```sh
+go install github.com/FacileStudio/capsule-cli@latest
 ```
+
+The binary lands in `$(go env GOPATH)/bin/capsule`. The `install.sh` script in this repo
+does the same thing through a shallow clone of `main`.
 
 ## Usage
 
-### Seal (encrypt & share)
-
-```bash
-# From argument
-capsule seal "my secret message"
-
-# From stdin (pipe-friendly)
-echo "secret" | capsule seal
-cat secret.txt | capsule seal
-
-# With options
-capsule seal "api_key=sk-1234" --burn --expires 1h
-capsule seal "fn main() {}" --syntax rust --no-burn --expires 7d
-
-# Password-protected
-capsule seal "top secret" --password
+```sh
+capsule seal "api_key=sk-1234" --expires 1h
+echo "secret" | capsule seal --no-burn
+capsule reveal https://capsule.facile.studio/cap_abc123#3xK9pQ
+capsule revoke https://capsule.facile.studio/cap_abc123 --token 7f2ae4
 ```
 
-### Reveal (fetch & decrypt)
+`seal` prints the shareable URL on stdout and the delete token on stderr, so redirecting
+stdout captures only the link. `reveal` prints plaintext on stdout and nothing else.
 
-```bash
-# Prints plaintext to stdout
-capsule reveal https://capsule.facile.studio/cap_abc123#keyFragment
+Full command reference: [docs/usage.md](docs/usage.md).
 
-# Pipe to file
-capsule reveal https://capsule.facile.studio/cap_abc123#keyFragment > secret.txt
+## Configuration
+
+The CLI reads no environment variables. Its only state is `~/.capsule.yml`, created with
+defaults the first time any command runs.
+
+| Key | What it does |
+|---|---|
+| `server_url` | Base URL used by `seal`. Defaults to `https://capsule.facile.studio` |
+
+`reveal` and `revoke` ignore this key and derive the server from the URL you pass them.
+
+Full reference: [docs/configuration.md](docs/configuration.md).
+
+## Structure
+
+```
+main.go      Entrypoint, delegates to cmd.Execute()
+cmd/         Cobra commands — seal, reveal, revoke, config, plus the URL parser
+internal/    api/ (HTTP client), config/ (YAML state), crypto/ (AES-GCM, PBKDF2)
+docs/        Architecture, configuration, development, usage
 ```
 
-### Revoke (burn a capsule)
+## Documentation
 
-```bash
-capsule revoke https://capsule.facile.studio/cap_abc123 --token abc123...def456
-```
+| Doc | What's in it |
+|---|---|
+| [Architecture](docs/architecture.md) | Crypto flow, URL fragment contract, server API calls |
+| [Configuration](docs/configuration.md) | The config file, its keys, and defaults |
+| [Development](docs/development.md) | Build, run, and release the binary |
+| [Usage](docs/usage.md) | Every command and flag, with examples |
 
-### Config
+---
 
-```bash
-# Show current config
-capsule config
-
-# Point to a different server
-capsule config set server https://my-capsule.example.com
-```
-
-## How it works
-
-1. **Seal**: generates a random 256-bit AES key, encrypts your content with AES-256-GCM, uploads the ciphertext, and puts the key in the URL fragment (never sent to the server).
-2. **Reveal**: extracts the key from the URL fragment, fetches the ciphertext, decrypts locally.
-3. **Password protection** (optional): wraps the AES key with PBKDF2 (600,000 iterations, SHA-256) + AES-GCM. The wrapped key, salt, and IV are encoded in the URL fragment. Decryption requires both the URL and the password.
-
-The server only ever stores ciphertext. No plaintext, no keys.
-
-## Self-hosting
-
-Capsule works with any Capsule-compatible server. Set your server URL:
-
-```bash
-capsule config set server https://your-server.example.com
-```
-
-## License
-
-MIT
+Part of the [Facile Suite](https://facile.studio) — self-hosted tools for creative studios
+and freelancers. One login, zero cloud dependency.
