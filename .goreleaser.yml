@@ -1,5 +1,7 @@
 version: 2
 
+project_name: capsule-cli
+
 builds:
   - main: .
     binary: capsule
@@ -15,16 +17,9 @@ builds:
       - -s -w -X github.com/FacileStudio/capsule-cli/cmd.version={{.Version}}
 
 archives:
-  - format: tar.gz
+  - formats:
+      - tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-
-brews:
-  - repository:
-      owner: FacileStudio
-      name: homebrew-tap
-    name: capsule
-    homepage: https://github.com/FacileStudio/capsule-cli
-    description: Zero-knowledge encrypted paste sharing from the terminal
 
 checksum:
   name_template: checksums.txt
