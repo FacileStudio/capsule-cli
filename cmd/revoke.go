@@ -3,8 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+
+	"github.com/FacileStudio/capsule-cli/internal/ui"
 
 	"github.com/FacileStudio/capsule-cli/internal/api"
 )
@@ -32,8 +33,7 @@ var revokeCmd = &cobra.Command{
 			return fmt.Errorf("revoking: %w", err)
 		}
 
-		green := color.New(color.FgGreen)
-		green.Println("Capsule burned.")
+		ui.Success("Capsule burned")
 		return nil
 	},
 }

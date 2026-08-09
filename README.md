@@ -27,17 +27,20 @@ The binary is named `capsule`. It talks to any Capsule-compatible server and def
 ## Install
 
 ```sh
-brew install FacileStudio/tap/capsule
+curl -fsSL https://raw.githubusercontent.com/FacileStudio/capsule-cli/main/install.sh | bash
 ```
 
-With a Go toolchain:
+Installs to `~/.local/bin`. Pass `--bin-dir <dir>` to change that, `--source` to build from
+source. The installer downloads a released binary and verifies it against the release
+checksums, falling back to a source build when no release matches your platform.
+
+```sh
+brew install FacileStudio/tap/capsule
+```
 
 ```sh
 go install github.com/FacileStudio/capsule-cli@latest
 ```
-
-The binary lands in `$(go env GOPATH)/bin/capsule`. The `install.sh` script in this repo
-does the same thing through a shallow clone of `main`.
 
 ## Usage
 

@@ -6,8 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+
+	"github.com/FacileStudio/capsule-cli/internal/ui"
 	"golang.org/x/term"
 
 	"github.com/FacileStudio/capsule-cli/internal/api"
@@ -112,11 +113,9 @@ var sealCmd = &cobra.Command{
 		}
 
 		url := fmt.Sprintf("%s/%s#%s", serverURL, resp.ID, fragment)
-		green := color.New(color.FgGreen)
-		green.Println(url)
+		fmt.Println(url)
 
-		dim := color.New(color.Faint)
-		dim.Fprintf(os.Stderr, "\nDelete token: %s\n", resp.DeleteToken)
+		fmt.Fprintf(os.Stderr, "\n%s\n", ui.Dim(fmt.Sprintf("Delete token: %s", resp.DeleteToken)))
 
 		return nil
 	},

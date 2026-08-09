@@ -3,8 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+
+	"github.com/FacileStudio/capsule-cli/internal/ui"
 
 	"github.com/FacileStudio/capsule-cli/internal/config"
 )
@@ -24,13 +25,12 @@ var configCmd = &cobra.Command{
 			return fmt.Errorf("loading config: %w", err)
 		}
 
-		dim := color.New(color.Faint)
-		dim.Print("server_url: ")
+		fmt.Print(ui.Dim("server_url: "))
 		fmt.Println(cfg.ServerURL)
 
 		path, err := config.Path()
 		if err == nil {
-			dim.Printf("\nConfig file: %s\n", path)
+			fmt.Printf("\n%s\n", ui.Dim(fmt.Sprintf("Config file: %s", path)))
 		}
 
 		return nil
@@ -57,8 +57,7 @@ var configSetServerCmd = &cobra.Command{
 			return fmt.Errorf("saving config: %w", err)
 		}
 
-		green := color.New(color.FgGreen)
-		green.Printf("Server URL set to %s\n", cfg.ServerURL)
+		ui.Success("Server URL set to %s", cfg.ServerURL)
 		return nil
 	},
 }
