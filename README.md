@@ -30,16 +30,13 @@ The binary is named `capsule`. It talks to any Capsule-compatible server and def
 curl -fsSL https://raw.githubusercontent.com/FacileStudio/capsule-cli/main/install.sh | bash
 ```
 
-Installs to `~/.local/bin`. Pass `--bin-dir <dir>` to change that, `--source` to build from
-source. The installer downloads a released binary and verifies it against the release
-checksums, falling back to a source build when no release matches your platform.
+Installs to `~/.local/bin` via [facile](https://github.com/FacileStudio/facile), the suite
+installer. Pass `--bin-dir <dir>` to change that, `--source` to build from source.
+
+Already have `facile`:
 
 ```sh
-brew install FacileStudio/tap/capsule
-```
-
-```sh
-go install github.com/FacileStudio/capsule-cli@latest
+facile install capsule
 ```
 
 ## Usage
