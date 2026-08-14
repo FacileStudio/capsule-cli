@@ -1,0 +1,48 @@
+---
+name: capsule
+description: >
+  Facile end-to-end encrypted paste. Use when the user asks to seal (encrypt),
+  reveal (decrypt), or revoke a secret snippet, or mentions Capsule or an
+  encrypted share.
+---
+
+# capsule — Facile E2E-encrypted paste
+
+Binary: `capsule`
+Config: `~/.capsule.yml` (only `server_url`; no env vars)
+
+Capsule encrypts content client-side with AES-256-GCM and uploads only the
+ciphertext. The decryption key rides in the URL fragment, which HTTP clients
+never send to the server — so the URL itself is the credential.
+
+## When to apply
+
+Use when the user wants to share a secret snippet, a key, or a configuration
+value, decrypt one already shared, or revoke an expired/leaked reference.
+Triggers: "seal", "reveal", "revoke", "encrypted paste", "paste a secret",
+"capsule", "share a key", "cap_"
+
+## Commands
+
+```
+capsule seal "<content>" [--expires 1h] [--no-burn]   Encrypt and share
+capsule reveal <url>                                   Decrypt and print plaintext
+capsule revoke <url> --token <token>                   Destroy a capsule early
+capsule config set server <url>                        Point seal at an instance
+```
+
+## Rules
+- `seal` prints the **shareable URL on stdout** and the **delete token on
+  stderr** — redirect stdout to capture only the link; capture both to use the
+  token later.
+- **The URL fragment after `#` is the secret.** Never log, echo, or paste a
+  capsule URL into chat, issue trackers, or file names whole — treat it as a
+  credential.
+- The delete token is the only way to revoke; if you did not keep the stderr
+  line and did not burn on seal, there is no way to take the capsule back.
+- `--no-burn` keeps server-side burn-on-read off; default behaviour may destroy
+  the capsule when read.
+- `reveal` prints plaintext to stdout and nothing else — redirect if you must,
+  but prefer keeping it off the terminal in shared sessions.
+- There is no account. Zero-knowledge: the server never sees plaintext or keys.
+- `reveal`/`revoke` ignore `server_url` and derive the instance from the URL.
