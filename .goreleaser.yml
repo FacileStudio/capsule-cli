@@ -26,3 +26,21 @@ checksum:
 
 changelog:
   sort: asc
+
+brews:
+  - name: capsule
+    homepage: https://github.com/FacileStudio/capsule-cli
+    description: Terminal client for Capsule, the zero-knowledge encrypted paste service
+    directory: Formula
+    repository:
+      owner: FacileStudio
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+    install: |
+      bin.install "capsule"
+    test: |
+      system "#{bin}/capsule", "--version"
