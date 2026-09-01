@@ -10,6 +10,11 @@ import (
 
 var version = "dev"
 
+var (
+	flagJSON    bool
+	flagNoColor bool
+)
+
 var rootCmd = &cobra.Command{
 	Use:   "capsule",
 	Short: "Zero-knowledge encrypted paste sharing",
@@ -19,14 +24,16 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.Version = version
 	rootCmd.SetVersionTemplate("{{.Name}} {{.Version}}\n")
-	rootCmd.PersistentFlags().Bool("no-color", false, "Disable colored output")
+	rootCmd.PersistentFlags().BoolVar(&flagJSON, "json", false, "Print one JSON document and nothing else")
+	rootCmd.PersistentFlags().BoolVar(&flagNoColor, "no-color", false, "Disable colored output")
 	cobra.OnInitialize(func() {
-		if v, _ := rootCmd.PersistentFlags().GetBool("no-color"); v {
+		if flagNoColor || flagJSON {
 			ui.DisableColor()
 		}
 	})
 }
 
+// Execute runs the root command tree.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)

@@ -14,6 +14,7 @@ The binary is named `capsule`. It talks to any Capsule-compatible server and def
 - Optionally wraps the key with a password using PBKDF2-SHA256 at 600,000 iterations
 - Fetches and decrypts a capsule back to stdout
 - Revokes a capsule early with the delete token returned at creation time
+- Manages API keys (list, create, revoke) for applications integrating with Capsule
 - Points at a self-hosted server through a single YAML config file
 
 ## Stack
@@ -46,6 +47,11 @@ capsule seal "api_key=sk-1234" --expires 1h
 echo "secret" | capsule seal --no-burn
 capsule reveal https://capsule.facile.studio/cap_abc123#3xK9pQ
 capsule revoke https://capsule.facile.studio/cap_abc123 --token 7f2ae4
+
+# API key management
+capsule keys list
+capsule keys create --app webapp --public --origins "https://example.com"
+capsule keys revoke 42 --yes
 ```
 
 `seal` prints the shareable URL on stdout and the delete token on stderr, so redirecting
@@ -55,14 +61,17 @@ Full command reference: [docs/usage.md](docs/usage.md).
 
 ## Configuration
 
-The CLI reads no environment variables. Its only state is `~/.capsule.yml`, created with
-defaults the first time any command runs.
+The CLI reads configuration from `~/.capsule.yml`, created with defaults the first time
+any command runs.
 
 | Key | What it does |
 |---|---|
-| `server_url` | Base URL used by `seal`. Defaults to `https://capsule.facile.studio` |
+| `server_url` | Base URL used by `seal` and `keys`. Defaults to `https://capsule.facile.studio` |
+| `token` | Optional bearer token for authenticated API requests |
 
-`reveal` and `revoke` ignore this key and derive the server from the URL you pass them.
+`reveal` and `revoke` ignore `server_url` and derive the server from the URL you pass them.
+Environment variables `CAPSULE_SERVER_URL` (or `CAPSULE_URL`) and `CAPSULE_TOKEN` override
+the file settings.
 
 Full reference: [docs/configuration.md](docs/configuration.md).
 
@@ -70,7 +79,7 @@ Full reference: [docs/configuration.md](docs/configuration.md).
 
 ```
 main.go      Entrypoint, delegates to cmd.Execute()
-cmd/         Cobra commands — seal, reveal, revoke, config, plus the URL parser
+cmd/         Cobra commands: seal, reveal, revoke, keys, config, plus the URL parser
 internal/    api/ (HTTP client), config/ (YAML state), crypto/ (AES-GCM, PBKDF2)
 docs/        Architecture, configuration, development, usage
 ```
@@ -86,5 +95,5 @@ docs/        Architecture, configuration, development, usage
 
 ---
 
-Part of the [Facile Suite](https://facile.studio) — self-hosted tools for creative studios
+Part of the [Facile Suite](https://facile.studio), self-hosted tools for creative studios
 and freelancers. One login, zero cloud dependency.

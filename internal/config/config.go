@@ -8,12 +8,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// DefaultServerURL is the default server base URL.
 const DefaultServerURL = "https://capsule.facile.studio"
 
+// Config holds the local configuration.
 type Config struct {
 	ServerURL string `yaml:"server_url"`
+	Token     string `yaml:"token,omitempty"`
 }
 
+// Path returns the path to the configuration file.
 func Path() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -22,6 +26,7 @@ func Path() (string, error) {
 	return filepath.Join(home, ".capsule.yml"), nil
 }
 
+// Load reads and parses the configuration file.
 func Load() (*Config, error) {
 	path, err := Path()
 	if err != nil {
@@ -52,6 +57,7 @@ func Load() (*Config, error) {
 	return &cfg, nil
 }
 
+// Save writes the configuration to disk.
 func Save(cfg *Config) error {
 	path, err := Path()
 	if err != nil {

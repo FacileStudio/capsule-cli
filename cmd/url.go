@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// ParsedURL holds the components extracted from a capsule URL.
 type ParsedURL struct {
 	ServerURL string
 	ID        string

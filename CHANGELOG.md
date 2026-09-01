@@ -10,6 +10,14 @@ record what shipped rather than what was written down at the time.
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-09-01
+
+### Added
+
+- `capsule keys` command group (`list`, `create`, `revoke`) to manage secret backend and public browser API keys.
+- API client methods `ListKeys`, `CreateKey`, and `RevokeKey`.
+- `--json` persistent flag for structured output.
+
 ## [0.1.2] — 2026-08-24
 
 ### Added
@@ -49,7 +57,8 @@ record what shipped rather than what was written down at the time.
   `revoke`, so a link from another instance works without reconfiguring.
 - `--version` reports the tag, injected by ldflags at build time.
 
-[Unreleased]: https://github.com/FacileStudio/capsule-cli/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/FacileStudio/capsule-cli/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/FacileStudio/capsule-cli/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/FacileStudio/capsule-cli/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/FacileStudio/capsule-cli/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/FacileStudio/capsule-cli/releases/tag/v0.1.0
