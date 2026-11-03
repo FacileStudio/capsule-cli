@@ -29,7 +29,7 @@ Triggers: "seal", "reveal", "revoke", "encrypted paste", "paste a secret",
 capsule seal "<content>" [--expires 1h] [--no-burn]   Encrypt and share
 capsule reveal <url>                                   Decrypt and print plaintext
 capsule revoke <url> --token <token>                   Destroy a capsule early
-capsule login [url]                                      Sign in through the browser (default capsule.facile.studio)
+capsule login [url]                                      Approve a link in any browser (default capsule.facile.studio)
 capsule whoami                                         Show the signed-in user
 capsule keys list [--app <name>]                       List registered API keys
 capsule keys create --app <name> [--public]            Create a new API key

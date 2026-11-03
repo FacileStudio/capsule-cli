@@ -10,6 +10,18 @@ record what shipped rather than what was written down at the time.
 
 ## [Unreleased]
 
+### Changed
+
+- `capsule login` prints an approval link and waits for you to approve it in any browser, with the
+  OAuth device grant through `porte/devicelogin`. Nothing listens on a port and nothing is typed,
+  so it works over SSH, and the "no browser available here" refusal is gone. A server without the
+  device exchange falls back to the loopback flow with a one-line notice.
+- porte v0.9.0.
+
+### Added
+
+- `--listener` on `login` forces the loopback browser flow.
+
 ## [0.3.0] — 2026-11-03
 
 ### Added

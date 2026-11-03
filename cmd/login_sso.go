@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/FacileStudio/porte/devicelogin"
 	"github.com/FacileStudio/porte/loopback"
 	"golang.org/x/term"
 
@@ -37,8 +38,47 @@ func serverOffersSSO(serverURL string) bool {
 	return err == nil && discovery.OIDCEnabled
 }
 
+// ssoLogin signs in through single sign-on and returns the session token. The
+// device grant is the default; a server without the device exchange, or
+// --listener, gets the loopback flow, and --no-listener the pasted code.
 func ssoLogin(serverURL string) (string, error) {
 	if loginNoListener {
+		return ssoLoginByPaste(serverURL)
+	}
+	if !loginListener {
+		token, fallback, err := deviceLogin(serverURL)
+		if !fallback {
+			return token, err
+		}
+	}
+	return ssoLoginByListener(serverURL)
+}
+
+// deviceLogin runs the device grant and trades its token for a Capsule
+// session. fallback is true when the server or the identity provider has no
+// device login, so the caller switches to the loopback flow.
+func deviceLogin(serverURL string) (string, bool, error) {
+	session, err := devicelogin.Login(context.Background(), devicelogin.Options{
+		AppOrigin:   serverURL,
+		Mount:       porteMount,
+		OpenBrowser: func(link string) bool { return browserAvailable() && browser.Open(link) == nil },
+	})
+	switch {
+	case errors.Is(err, devicelogin.ErrExchangeNotMounted), errors.Is(err, devicelogin.ErrNoDeviceGrant):
+		ui.Warn("%s has no device login yet, using the browser listener", serverURL)
+		return "", true, nil
+	case errors.Is(err, devicelogin.ErrAccountNotLinked):
+		return "", false, fmt.Errorf("sign in once at %s in a browser, then run 'capsule login' again", serverURL)
+	case err != nil:
+		return "", false, fmt.Errorf("sign-in failed: %w", err)
+	}
+	return session.Token, false, nil
+}
+
+// ssoLoginByListener is the loopback flow: the browser lands on a local port
+// with a one-time code. A machine with no browser to land there pastes it.
+func ssoLoginByListener(serverURL string) (string, error) {
+	if !browserAvailable() && !loginListener {
 		return ssoLoginByPaste(serverURL)
 	}
 

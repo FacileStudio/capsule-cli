@@ -14,7 +14,7 @@ capsule [command]
 | `seal` | Encrypt content and upload it |
 | `reveal` | Fetch a capsule and decrypt it |
 | `revoke` | Delete a capsule with its delete token |
-| `login [url]` | Sign in through the browser |
+| `login [url]` | Sign in by approving a link in any browser |
 | `logout` | End the session and forget the token |
 | `whoami` | Show the signed-in user |
 | `keys list` | List registered API keys |
@@ -162,20 +162,24 @@ Server URL set to https://capsule.example.com
 
 ## `capsule login [url]`
 
-Signs in through your browser. The server defaults to `https://capsule.facile.studio`; an
-argument, `CAPSULE_SERVER_URL`, `CAPSULE_URL` or a stored value take precedence in that order.
-The CLI opens a loopback port, sends the browser to the server, and a session already open with
-another Facile tool completes the login with no prompt.
+Signs in by approving a link in any browser. The server defaults to
+`https://capsule.facile.studio`; an argument, `CAPSULE_SERVER_URL`, `CAPSULE_URL` or a stored
+value take precedence in that order. The CLI prints an approval link through the OAuth device
+grant and waits until you approve it, on this machine or another one. Nothing listens on a port
+and nothing is typed, so it works over SSH.
 
 ```sh
 capsule login
-capsule login https://capsule.example.com --no-listener
+capsule login https://capsule.example.com --listener
 echo "$TOKEN" | capsule login --token-stdin
 ```
 
-`--no-browser` prints the URL instead of opening it. `--no-listener` is for a terminal whose
-browser is on another machine: the page shows a code and the command reads it from stdin.
-`--token` and `--token-stdin` store an existing token after checking it.
+A server without device login falls back to the loopback flow with a one-line notice.
+`--listener` forces that flow: a browser on this machine redirects to a local port.
+`--no-browser` prints the URL instead of opening it. `--no-listener` shows a code on the page
+for the command to read from stdin. `--token` and `--token-stdin` store an existing token after
+checking it. If the server says the account is not linked, sign in once at the server in a
+browser, then run `capsule login` again.
 
 ## `capsule logout` and `capsule whoami`
 

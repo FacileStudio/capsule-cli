@@ -19,22 +19,26 @@ var (
 	loginTokenStdin bool
 	loginNoBrowser  bool
 	loginNoListener bool
+	loginListener   bool
 )
 
 var loginCmd = &cobra.Command{
 	Use:   "login [url]",
 	Short: "Sign in to a Capsule server",
-	Long: `Sign in to a Capsule server through your browser.
+	Long: `Sign in to a Capsule server by approving a link in any browser.
 
-The server defaults to https://capsule.facile.studio. A session already open with
-another Facile tool completes the login without a prompt. Alternatives:
+The server defaults to https://capsule.facile.studio. The command prints an
+approval link and waits until you approve it, on this machine or another one.
+Nothing listens on a port and nothing is typed, so it works over SSH.
+Alternatives:
 
   capsule login <url> --token <token>     use an existing token
   capsule login <url> --token-stdin       read the token from stdin
-  capsule login <url> --no-listener       sign in from a browser on another machine
+  capsule login <url> --listener          use a browser on this machine and a local port
+  capsule login <url> --no-listener       paste back a code shown by the server
 
---no-listener is for the terminal whose browser is somewhere else: the server
-shows a code on the page and this command reads it from stdin.
+A server without device login falls back to the --listener flow on its own,
+or to --no-listener when no browser is available here.
 
 The URL may be omitted once CAPSULE_SERVER_URL, CAPSULE_URL or a previous login
 has set one. Without any of them the default server is used.`,
@@ -47,6 +51,7 @@ func init() {
 	loginCmd.Flags().BoolVar(&loginTokenStdin, "token-stdin", false, "Read the token from stdin")
 	loginCmd.Flags().BoolVar(&loginNoBrowser, "no-browser", false, "Print the sign-in URL instead of opening a browser")
 	loginCmd.Flags().BoolVar(&loginNoListener, "no-listener", false, "Sign in from a browser on another machine, pasting the code back")
+	loginCmd.Flags().BoolVar(&loginListener, "listener", false, "Use the loopback browser flow instead of the approval link")
 	rootCmd.AddCommand(loginCmd)
 }
 
@@ -78,9 +83,6 @@ func runLogin(cmd *cobra.Command, args []string) error {
 func obtainToken(serverURL string) (string, error) {
 	if loginToken != "" || loginTokenStdin {
 		return tokenFromFlags(serverURL)
-	}
-	if !loginNoListener && !browserAvailable() {
-		return "", fmt.Errorf("no browser available here: run 'capsule login --no-listener', or pass --token or --token-stdin")
 	}
 	if !serverOffersSSO(serverURL) {
 		return "", fmt.Errorf("%s offers no browser sign-in: pass --token or --token-stdin", serverURL)

@@ -48,7 +48,7 @@ echo "secret" | capsule seal --no-burn
 capsule reveal https://capsule.facile.studio/cap_abc123#3xK9pQ
 capsule revoke https://capsule.facile.studio/cap_abc123 --token 7f2ae4
 
-# Sign in (opens your browser, no code to paste)
+# Sign in (approve the printed link in any browser, works over SSH)
 capsule login
 capsule whoami
 
