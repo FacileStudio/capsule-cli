@@ -14,6 +14,9 @@ capsule [command]
 | `seal` | Encrypt content and upload it |
 | `reveal` | Fetch a capsule and decrypt it |
 | `revoke` | Delete a capsule with its delete token |
+| `login [url]` | Sign in through the browser |
+| `logout` | End the session and forget the token |
+| `whoami` | Show the signed-in user |
 | `keys list` | List registered API keys |
 | `keys create` | Create a new API key |
 | `keys revoke` | Revoke an API key by ID |
@@ -156,6 +159,28 @@ Server URL set to https://capsule.example.com
 
 `capsule config set` on its own has no action and prints help for its subcommands.
 `server_url` is the only key the CLI knows how to set.
+
+## `capsule login [url]`
+
+Signs in through your browser. The server defaults to `https://capsule.facile.studio`; an
+argument, `CAPSULE_SERVER_URL`, `CAPSULE_URL` or a stored value take precedence in that order.
+The CLI opens a loopback port, sends the browser to the server, and a session already open with
+another Facile tool completes the login with no prompt.
+
+```sh
+capsule login
+capsule login https://capsule.example.com --no-listener
+echo "$TOKEN" | capsule login --token-stdin
+```
+
+`--no-browser` prints the URL instead of opening it. `--no-listener` is for a terminal whose
+browser is on another machine: the page shows a code and the command reads it from stdin.
+`--token` and `--token-stdin` store an existing token after checking it.
+
+## `capsule logout` and `capsule whoami`
+
+`logout` ends the session on the server and clears the stored token. `whoami` prints the
+signed-in email, or exits non-zero when not logged in.
 
 ## `capsule keys list`
 

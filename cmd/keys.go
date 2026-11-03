@@ -187,12 +187,7 @@ func connectClient() (*api.Client, error) {
 	if err != nil {
 		return nil, fmt.Errorf("loading config: %w", err)
 	}
-	serverURL := strings.TrimRight(cfg.ServerURL, "/")
-	if envURL := os.Getenv("CAPSULE_SERVER_URL"); envURL != "" {
-		serverURL = strings.TrimRight(envURL, "/")
-	} else if envURL := os.Getenv("CAPSULE_URL"); envURL != "" {
-		serverURL = strings.TrimRight(envURL, "/")
-	}
+	serverURL := cfg.Server()
 	token := cfg.Token
 	if envToken := os.Getenv("CAPSULE_TOKEN"); envToken != "" {
 		token = envToken

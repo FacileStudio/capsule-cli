@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -45,6 +46,10 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("reading config: %w", err)
 	}
 
+	if info, statErr := os.Stat(path); statErr == nil && info.Mode().Perm()&0o077 != 0 {
+		_ = os.Chmod(path, 0o600)
+	}
+
 	var cfg Config
 	if err := yaml.Unmarshal(data, &cfg); err != nil {
 		return nil, fmt.Errorf("parsing config: %w", err)
@@ -55,6 +60,17 @@ func Load() (*Config, error) {
 	}
 
 	return &cfg, nil
+}
+
+// Server returns the server base URL: CAPSULE_SERVER_URL, then CAPSULE_URL,
+// then the stored value, then DefaultServerURL.
+func (c *Config) Server() string {
+	for _, value := range []string{os.Getenv("CAPSULE_SERVER_URL"), os.Getenv("CAPSULE_URL"), c.ServerURL} {
+		if value != "" {
+			return strings.TrimRight(value, "/")
+		}
+	}
+	return DefaultServerURL
 }
 
 // Save writes the configuration to disk.
@@ -69,7 +85,15 @@ func Save(cfg *Config) error {
 		return fmt.Errorf("marshaling config: %w", err)
 	}
 
-	if err := os.WriteFile(path, data, 0644); err != nil {
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
+	if err != nil {
+		return fmt.Errorf("writing config: %w", err)
+	}
+	defer file.Close()
+	if err := file.Chmod(0o600); err != nil {
+		return fmt.Errorf("securing config: %w", err)
+	}
+	if _, err := file.Write(data); err != nil {
 		return fmt.Errorf("writing config: %w", err)
 	}
 

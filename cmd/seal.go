@@ -64,7 +64,7 @@ var sealCmd = &cobra.Command{
 			return fmt.Errorf("loading config: %w", err)
 		}
 
-		serverURL := strings.TrimRight(cfg.ServerURL, "/")
+		serverURL := cfg.Server()
 
 		key, err := crypto.GenerateKey()
 		if err != nil {

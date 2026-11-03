@@ -48,6 +48,10 @@ echo "secret" | capsule seal --no-burn
 capsule reveal https://capsule.facile.studio/cap_abc123#3xK9pQ
 capsule revoke https://capsule.facile.studio/cap_abc123 --token 7f2ae4
 
+# Sign in (opens your browser, no code to paste)
+capsule login
+capsule whoami
+
 # API key management
 capsule keys list
 capsule keys create --app webapp --public --origins "https://example.com"
@@ -67,7 +71,7 @@ any command runs.
 | Key | What it does |
 |---|---|
 | `server_url` | Base URL used by `seal` and `keys`. Defaults to `https://capsule.facile.studio` |
-| `token` | Optional bearer token for authenticated API requests |
+| `token` | Session token written by `capsule login`, mode 0600 |
 
 `reveal` and `revoke` ignore `server_url` and derive the server from the URL you pass them.
 Environment variables `CAPSULE_SERVER_URL` (or `CAPSULE_URL`) and `CAPSULE_TOKEN` override

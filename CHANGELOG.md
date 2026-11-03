@@ -10,6 +10,21 @@ record what shipped rather than what was written down at the time.
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-11-03
+
+### Added
+
+- `capsule login [url]`: one-step browser sign-in through a loopback port, with `--no-browser`,
+  `--no-listener`, `--token` and `--token-stdin` fallbacks.
+- `capsule logout` and `capsule whoami`.
+
+### Changed
+
+- Every command that needs a server now resolves it the same way: `CAPSULE_SERVER_URL`,
+  `CAPSULE_URL`, the stored value, then `https://capsule.facile.studio`. `seal` used to ignore
+  the environment variables.
+- `~/.capsule.yml` is written with mode 0600 and tightened on read.
+
 ## [0.2.0] — 2026-09-01
 
 ### Added
