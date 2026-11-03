@@ -10,6 +10,8 @@ record what shipped rather than what was written down at the time.
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-11-03
+
 ### Changed
 
 - `capsule login` prints an approval link and waits for you to approve it in any browser, with the
@@ -84,7 +86,9 @@ record what shipped rather than what was written down at the time.
   `revoke`, so a link from another instance works without reconfiguring.
 - `--version` reports the tag, injected by ldflags at build time.
 
-[Unreleased]: https://github.com/FacileStudio/capsule-cli/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/FacileStudio/capsule-cli/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/FacileStudio/capsule-cli/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/FacileStudio/capsule-cli/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/FacileStudio/capsule-cli/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/FacileStudio/capsule-cli/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/FacileStudio/capsule-cli/compare/v0.1.0...v0.1.1
