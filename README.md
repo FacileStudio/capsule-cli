@@ -97,6 +97,10 @@ docs/        Architecture, configuration, development, usage
 | [Development](docs/development.md) | Build, run, and release the binary |
 | [Usage](docs/usage.md) | Every command and flag, with examples |
 
+## License
+
+capsule-cli is released under the [MIT License](LICENSE).
+
 ---
 
 Part of the [Facile Suite](https://facile.studio), self-hosted tools for creative studios
