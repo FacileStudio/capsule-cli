@@ -10,6 +10,14 @@ record what shipped rather than what was written down at the time.
 
 ## [Unreleased]
 
+## [0.4.1] — 2026-11-11
+
+### Security
+
+- build: Go 1.26.11 (`go` directive). It fixes GO-2026-6848 to GO-2026-6859 in the standard library and toolchain, which douane reported as unscored gaps and which failed the gate.
+- build(deps): `golang.org/x/crypto` v0.54.0 to v0.55.0 (GO-2026-6303).
+- `douane.yml` permits GO-2026-5932 on `golang.org/x/crypto` until 2027-02-09: its fix exists only as an unreleased x/crypto commit, and capsule-cli links `pbkdf2` only, never `openpgp`.
+
 ## [0.4.0] — 2026-11-03
 
 ### Changed
@@ -86,7 +94,8 @@ record what shipped rather than what was written down at the time.
   `revoke`, so a link from another instance works without reconfiguring.
 - `--version` reports the tag, injected by ldflags at build time.
 
-[Unreleased]: https://github.com/FacileStudio/capsule-cli/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/FacileStudio/capsule-cli/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/FacileStudio/capsule-cli/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/FacileStudio/capsule-cli/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/FacileStudio/capsule-cli/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/FacileStudio/capsule-cli/compare/v0.1.2...v0.2.0
