@@ -10,6 +10,12 @@ record what shipped rather than what was written down at the time.
 
 ## [Unreleased]
 
+## [0.4.2] — 2026-11-11
+
+### Security
+
+- build(deps): `golang.org/x/crypto` v0.55.0 to v0.58.0 (CVE-2026-56855, CVE-2026-78662).
+
 ## [0.4.1] — 2026-11-11
 
 ### Security
